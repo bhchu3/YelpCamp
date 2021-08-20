@@ -25,14 +25,10 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-// ToDo** create makecampground route title: MyBackyard, description: cheap camping
-app.get("/makecampground", async (req, res) => {
-  const camp = new CampGround({
-    title: "My Backyard",
-    description: "cheap camping",
-  });
-  await camp.save();
-  res.send(camp);
+// ToDo** create campgrounds route, create campgrounds folder and index.ejs and display title all of them using <ul>
+app.get("/campgrounds", async (req, res) => {
+  const campgrounds = await CampGround.find({});
+  res.render("campgrounds/index", { campgrounds });
 });
 
 app.listen(3000, () => {
