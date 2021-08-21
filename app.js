@@ -22,13 +22,18 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("home");
 });
 
-// ToDo** create campgrounds route, create campgrounds folder and index.ejs and display title all of them using <ul>
+// create campgrounds route, create campgrounds folder and index.ejs and display title all of them using <ul>
 app.get("/campgrounds", async (req, res) => {
   const campgrounds = await CampGround.find({});
   res.render("campgrounds/index", { campgrounds });
+});
+
+app.get("/campgrounds/:id", async (req, res) => {
+  const campground = await CampGround.findById(req.params.id);
+  res.render("campgrounds/show", { campground });
 });
 
 app.listen(3000, () => {
