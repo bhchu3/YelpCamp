@@ -21,6 +21,9 @@ db.once("open", function () {
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+//for post request
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   res.render("home");
 });
@@ -31,6 +34,18 @@ app.get("/campgrounds", async (req, res) => {
   res.render("campgrounds/index", { campgrounds });
 });
 
+// Create new campground route
+app.get("/campgrounds/new", (req, res) => {
+  res.render("campgrounds/new");
+});
+
+app.post("/campgrounds", async (req, res) => {
+  const newCamp = new CampGround(req.body);
+  await newCamp.save();
+  res.redirect(`/campgrounds/${newCamp._id}`);
+});
+
+// Show route with campground id
 app.get("/campgrounds/:id", async (req, res) => {
   const campground = await CampGround.findById(req.params.id);
   res.render("campgrounds/show", { campground });
