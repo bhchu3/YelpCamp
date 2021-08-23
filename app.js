@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
+const methodOverride = require("method-override");
 const CampGround = require("./models/campground");
 
 // Mongoose setup
@@ -23,6 +24,8 @@ app.set("view engine", "ejs");
 
 //for post request
 app.use(express.urlencoded({ extended: true }));
+// override with POST having ?_method=DELETE
+app.use(methodOverride("_method"));
 
 app.get("/", (req, res) => {
   res.render("home");
@@ -49,6 +52,20 @@ app.post("/campgrounds", async (req, res) => {
 app.get("/campgrounds/:id", async (req, res) => {
   const campground = await CampGround.findById(req.params.id);
   res.render("campgrounds/show", { campground });
+});
+
+// ---- Edit route with Put Request ( need npm install method override for put request)
+app.get("/campgrounds/:id/edit", async (req, res) => {
+  const campground = await CampGround.findById(req.params.id);
+  res.render("campgrounds/edit", { campground });
+});
+
+app.put("/campgrounds/:id", async (req, res) => {
+  const { id } = req.params;
+  const campground = await CampGround.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  res.redirect(`/campgrounds/${campground._id}`);
 });
 
 app.listen(3000, () => {
