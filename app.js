@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const CampGround = require("./models/campground");
 const ejsMate = require("ejs-mate");
+const catchAsync = require("./helper/catchAsync");
 
 // Mongoose setup
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
@@ -36,51 +37,74 @@ app.get("/", (req, res) => {
 });
 
 // create campgrounds route, create campgrounds folder and index.ejs and display title all of them using <ul>
-app.get("/campgrounds", async (req, res) => {
-  const campgrounds = await CampGround.find({});
-  res.render("campgrounds/index", { campgrounds });
-});
+app.get(
+  "/campgrounds",
+  catchAsync(async (req, res) => {
+    const campgrounds = await CampGround.find({});
+    res.render("campgrounds/index", { campgrounds });
+  })
+);
 
 // Create new campground route
 app.get("/campgrounds/new", (req, res) => {
   res.render("campgrounds/new");
 });
 
-app.post("/campgrounds", async (req, res) => {
-  const newCamp = new CampGround(req.body);
-  await newCamp.save();
-  res.redirect(`/campgrounds/${newCamp._id}`);
-});
+app.post(
+  "/campgrounds",
+  catchAsync(async (req, res, next) => {
+    const newCamp = new CampGround(req.body);
+    await newCamp.save();
+    res.redirect(`/campgrounds/${newCamp._id}`);
+  })
+);
 
 // Show route with campground id
-app.get("/campgrounds/:id", async (req, res) => {
-  const campground = await CampGround.findById(req.params.id);
-  res.render("campgrounds/show", { campground });
-});
+app.get(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const campground = await CampGround.findById(req.params.id);
+    res.render("campgrounds/show", { campground });
+  })
+);
 
 // ---- Edit route with Put Request ( need npm install method override for put request)
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  const campground = await CampGround.findById(req.params.id);
-  res.render("campgrounds/edit", { campground });
-});
+app.get(
+  "/campgrounds/:id/edit",
+  catchAsync(async (req, res) => {
+    const campground = await CampGround.findById(req.params.id);
+    res.render("campgrounds/edit", { campground });
+  })
+);
 
-app.put("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await CampGround.findByIdAndUpdate(
-    id,
-    { ...req.body },
-    {
-      new: true,
-    }
-  );
-  res.redirect(`/campgrounds/${campground._id}`);
-});
+app.put(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const campground = await CampGround.findByIdAndUpdate(
+      id,
+      { ...req.body },
+      {
+        new: true,
+      }
+    );
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
 
 // Delete route
-app.delete("/campgrounds/:id", async (req, res) => {
-  const { id } = req.params;
-  await CampGround.findByIdAndDelete(id);
-  res.redirect("/campgrounds");
+app.delete(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    await CampGround.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
+  })
+);
+
+// Error-handling middleware function
+app.use((err, req, res, next) => {
+  res.send("someting wong");
 });
 
 app.listen(3000, () => {
