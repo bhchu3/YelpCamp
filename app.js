@@ -6,6 +6,7 @@ const methodOverride = require("method-override");
 const CampGround = require("./models/campground");
 const ejsMate = require("ejs-mate");
 const catchAsync = require("./helper/catchAsync");
+const ExpressError = require("./helper/expressError");
 
 // Mongoose setup
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
@@ -102,9 +103,15 @@ app.delete(
   })
 );
 
+// !! important !! the code below only run when above routes is not found, so order is important
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page Not Found", 404)); // this next will pass the err to the error middleware
+});
+
 // Error-handling middleware function
 app.use((err, req, res, next) => {
-  res.send("someting wong");
+  const { message = "Sometime went Wrong!", statusCode = 500 } = err;
+  res.status(statusCode).render("error", { err });
 });
 
 app.listen(3000, () => {
