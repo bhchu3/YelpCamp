@@ -7,6 +7,7 @@ const CampGround = require("./models/campground");
 const ejsMate = require("ejs-mate");
 const catchAsync = require("./helper/catchAsync");
 const ExpressError = require("./helper/expressError");
+const Joi = require("joi");
 
 // Mongoose setup
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
@@ -54,6 +55,23 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   catchAsync(async (req, res, next) => {
+    // Joi validations
+    const campgroundsSchema = Joi.object({
+      title: Joi.string().required(),
+      location: Joi.string().required(),
+      image: Joi.string().required(),
+      price: Joi.number().min(0).required(),
+      description: Joi.string().required(),
+    });
+    const result = campgroundsSchema.validate(req.body);
+    // below if statement only defined when there is a error
+    if (result.error) {
+      console.log(result.error.details); // return Array
+      const messages = result.error.details.map((el) => el.message).join(",");
+      // we have the catchAsync Function so when we throw the err express
+      // able to catch it and pass it to error handler middleware function.
+      throw new ExpressError(messages, 400);
+    }
     const newCamp = new CampGround(req.body);
     await newCamp.save();
     res.redirect(`/campgrounds/${newCamp._id}`);
