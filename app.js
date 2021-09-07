@@ -2,9 +2,10 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
-const methodOverride = require("method-override");
-const CampGround = require("./models/campground");
 const ejsMate = require("ejs-mate");
+const methodOverride = require("method-override");
+
+const CampGround = require("./models/campground");
 const catchAsync = require("./helper/catchAsync");
 const ExpressError = require("./helper/expressError");
 const { campgroundsSchema } = require("./schemas");
