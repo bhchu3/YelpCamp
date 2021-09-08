@@ -9,7 +9,7 @@ const CampGround = require("./models/campground");
 const Review = require("./models/reviews");
 const catchAsync = require("./helper/catchAsync");
 const ExpressError = require("./helper/expressError");
-const { campgroundsSchema } = require("./schemas");
+const { campgroundsSchema, reviewsSchema } = require("./schemas");
 
 // Mongoose setup
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
@@ -36,11 +36,25 @@ app.use(express.urlencoded({ extended: true }));
 // override with POST having ?_method=DELETE
 app.use(methodOverride("_method"));
 
+// Joi validate middleware
 const validateCampground = (req, res, next) => {
-  const result = campgroundsSchema.validate(req.body.campground);
+  const { error } = campgroundsSchema.validate(req.body);
   // below if statement only defined when there is a error
-  if (result.error) {
-    const messages = result.error.details.map((el) => el.message).join(",");
+  if (error) {
+    const messages = error.details.map((el) => el.message).join(",");
+    // we have the catchAsync Function so when we throw the err express
+    // able to catch it and pass it to error handler middleware function.
+    throw new ExpressError(messages, 400);
+  } else {
+    next();
+  }
+};
+
+const validateReview = (req, res, next) => {
+  const { error } = reviewsSchema.validate(req.body);
+  // below if statement only defined when there is a error
+  if (error) {
+    const messages = error.details.map((el) => el.message).join(",");
     // we have the catchAsync Function so when we throw the err express
     // able to catch it and pass it to error handler middleware function.
     throw new ExpressError(messages, 400);
@@ -88,7 +102,8 @@ app.get(
 
 // POST review rating with campground id
 app.post(
-  "/campground/:id/review",
+  "/campgrounds/:id/reviews",
+  validateReview,
   catchAsync(async (req, res) => {
     const campground = await CampGround.findById(req.params.id);
     const review = new Review(req.body.review);
