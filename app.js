@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 const validateCampground = (req, res, next) => {
-  const result = campgroundsSchema.validate(req.body);
+  const result = campgroundsSchema.validate(req.body.campground);
   // below if statement only defined when there is a error
   if (result.error) {
     const messages = result.error.details.map((el) => el.message).join(",");
@@ -70,7 +70,7 @@ app.post(
   "/campgrounds",
   validateCampground,
   catchAsync(async (req, res, next) => {
-    const newCamp = new CampGround(req.body);
+    const newCamp = new CampGround(req.body.campground);
     await newCamp.save();
     res.redirect(`/campgrounds/${newCamp._id}`);
   })
@@ -101,7 +101,7 @@ app.put(
     const { id } = req.params;
     const campground = await CampGround.findByIdAndUpdate(
       id,
-      { ...req.body },
+      { ...req.body.campground },
       {
         new: true,
       }
