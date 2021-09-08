@@ -6,6 +6,7 @@ const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 
 const CampGround = require("./models/campground");
+const Review = require("./models/reviews");
 const catchAsync = require("./helper/catchAsync");
 const ExpressError = require("./helper/expressError");
 const { campgroundsSchema } = require("./schemas");
@@ -82,6 +83,19 @@ app.get(
   catchAsync(async (req, res) => {
     const campground = await CampGround.findById(req.params.id);
     res.render("campgrounds/show", { campground });
+  })
+);
+
+// POST review rating with campground id
+app.post(
+  "/campground/:id/review",
+  catchAsync(async (req, res) => {
+    const campground = await CampGround.findById(req.params.id);
+    const review = new Review(req.body.review);
+    await campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
