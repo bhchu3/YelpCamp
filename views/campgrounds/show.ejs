@@ -17,7 +17,7 @@
       </ul>
       <div class="card-body">
         <a
-          class="card-link btn btn-info mb-2 mb-md-0"
+          class="card-link btn btn-info"
           href="/campgrounds/<%= campground._id %>/edit "
         >
           Edit
@@ -71,6 +71,12 @@
         <h5 class="card-title">Rating: <%= review.rating %></h5>
         <p class="card-text">Review: <%= review.body %></p>
       </div>
+      <form
+        action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>/?_method=DELETE"
+        method="POST"
+      >
+        <button class="btn btn-sm btn-danger m-2">Delete</button>
+      </form>
     </div>
     <% } %>
     <div class="mb-3">

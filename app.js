@@ -84,7 +84,7 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   validateCampground,
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req, res) => {
     const newCamp = new CampGround(req.body.campground);
     await newCamp.save();
     res.redirect(`/campgrounds/${newCamp._id}`);
@@ -102,17 +102,31 @@ app.get(
   })
 );
 
-// POST review rating with campground id
+// POST Review rating with campground id
 app.post(
   "/campgrounds/:id/reviews",
   validateReview,
-  catchAsync(async (req, res, next) => {
+  catchAsync(async (req, res) => {
     const campground = await CampGround.findById(req.params.id);
     const review = new Review(req.body.review);
     await campground.reviews.push(review);
     await review.save();
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
+
+// Delete Review
+// The $pull operator removes from an existing array all instances of a value or values
+// that match a specified condition.
+// https://docs.mongodb.com/manual/reference/operator/update/pull/#mongodb-update-up.-pull
+app.delete(
+  "/campgrounds/:id/reviews/:reviewId",
+  catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    await CampGround.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`);
   })
 );
 
