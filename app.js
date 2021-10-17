@@ -6,6 +6,9 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const ExpressError = require("./helper/expressError");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
@@ -53,6 +56,25 @@ app.use(session(sessionConfig));
 
 // flash
 app.use(flash());
+
+/* 
+In a Connect or Express-based application, passport.initialize() 
+middleware is required to initialize Passport. 
+If your application uses persistent login sessions, 
+passport.session() middleware must also be used.
+http://www.passportjs.org/docs/downloads/html/
+ be sure to use session() before passport.session() 
+ to ensure that the login session is restored in the 
+ correct order.
+*/
+app.use(passport.initialize());
+app.use(passport.session());
+
+// the authenticate() from passport-local-mongoose
+passport.use(new LocalStrategy(User.authenticate()));
+// https://github.com/saintedlama/passport-local-mongoose/blob/main/README.md#api-documentation
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
