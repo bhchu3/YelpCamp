@@ -4,6 +4,7 @@ const catchAsync = require("../helper/catchAsync");
 const ExpressError = require("../helper/expressError");
 const CampGround = require("../models/campground");
 const { campgroundsSchema } = require("../schemas");
+const { isLoggedIn } = require("../middleware");
 
 // Joi validate middleware
 const validateCampground = (req, res, next) => {
@@ -29,12 +30,13 @@ router.get(
 );
 
 // Create new campground route
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
 router.post(
   "/",
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     const newCamp = new CampGround(req.body.campground);
@@ -62,6 +64,7 @@ router.get(
 // ---- Edit route with Put Request ( need npm install method override for put request)
 router.get(
   "/:id/edit",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const campground = await CampGround.findById(req.params.id);
     if (!campground) {
@@ -74,6 +77,7 @@ router.get(
 
 router.put(
   "/:id",
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -92,6 +96,7 @@ router.put(
 // Delete route
 router.delete(
   "/:id",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     await CampGround.findByIdAndDelete(id);
