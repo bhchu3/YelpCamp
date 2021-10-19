@@ -18,6 +18,10 @@
         </li>
         <li class="list-group-item">$<%= campground.price%>/night</li>
       </ul>
+      <!-- The mongoose .equals() method is used to compare those types of values.
+         The ObjectId (_id) field does get saved as an object by default: 
+         https://www.vividcortex.com/blog/what-is-mongodbs-id-field-and-how-to-use-it -->
+      <% if(currentUser && campground.author.equals(currentUser._id)) { %>
       <div class="card-body">
         <a
           class="card-link btn btn-info"
@@ -33,6 +37,7 @@
           <button class="card-link btn btn-danger">Delete Campground</button>
         </form>
       </div>
+      <% } %>
     </div>
   </div>
   <div class="col-12 col-md-6">
