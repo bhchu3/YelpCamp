@@ -1,24 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const catchAsync = require("../helper/catchAsync");
-const ExpressError = require("../helper/expressError");
 const CampGround = require("../models/campground");
-const { campgroundsSchema } = require("../schemas");
-const { isLoggedIn } = require("../middleware");
-
-// Joi validate middleware
-const validateCampground = (req, res, next) => {
-  const { error } = campgroundsSchema.validate(req.body);
-  // below if statement only defined when there is a error
-  if (error) {
-    const messages = error.details.map((el) => el.message).join(",");
-    // we have the catchAsync Function so when we throw the err express
-    // able to catch it and pass it to error handler middleware function.
-    throw new ExpressError(messages, 400);
-  } else {
-    next();
-  }
-};
+const { isLoggedIn, isAuthor, validateCampground } = require("../middleware");
 
 // create campgrounds route, create campgrounds folder and index.ejs and display title all of them using <ul>
 router.get(
@@ -66,8 +50,10 @@ router.get(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isAuthor,
   catchAsync(async (req, res) => {
-    const campground = await CampGround.findById(req.params.id);
+    const { id } = req.params;
+    const campground = await CampGround.findById(id);
     if (!campground) {
       req.flash("error", "Cannot find that campground");
       return res.redirect("/campgrounds");
@@ -79,9 +65,11 @@ router.get(
 router.put(
   "/:id",
   isLoggedIn,
+  isAuthor,
   validateCampground,
   catchAsync(async (req, res) => {
     const { id } = req.params;
+
     const campground = await CampGround.findByIdAndUpdate(
       id,
       { ...req.body.campground },
@@ -98,6 +86,7 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isAuthor,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     await CampGround.findByIdAndDelete(id);

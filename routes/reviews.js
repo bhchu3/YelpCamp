@@ -7,20 +7,7 @@ const catchAsync = require("../helper/catchAsync");
 const CampGround = require("../models/campground");
 const Review = require("../models/reviews");
 const ExpressError = require("../helper/expressError");
-const { reviewsSchema } = require("../schemas");
-
-const validateReview = (req, res, next) => {
-  const { error } = reviewsSchema.validate(req.body);
-  // below if statement only defined when there is a error
-  if (error) {
-    const messages = error.details.map((el) => el.message).join(",");
-    // we have the catchAsync Function so when we throw the err express
-    // able to catch it and pass it to error handler middleware function.
-    throw new ExpressError(messages, 400);
-  } else {
-    next();
-  }
-};
+const { validateReview } = require("../middleware");
 
 // POST Review rating with campground id
 router.post(
