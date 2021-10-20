@@ -3,37 +3,18 @@ const router = express.Router();
 const User = require("../models/user");
 const catchAsync = require("../helper/catchAsync");
 const passport = require("passport");
+const users = require("../controllers/users");
 
-router.get("/register", (req, res) => {
-  res.render("users/register");
-});
+// user register render page
+router.get("/register", users.renderRegister);
 
-router.post(
-  "/register",
-  catchAsync(async (req, res, next) => {
-    try {
-      const { email, username, password } = req.body;
-      const user = new User({ email, username });
-      const registerdUser = await User.register(user, password);
-      req.login(registerdUser, function (err) {
-        if (err) {
-          return next();
-        } else {
-          req.flash("success", "Welcome to YelpCamp");
-          res.redirect("/campgrounds");
-        }
-      });
-    } catch (e) {
-      req.flash("error", e.message);
-      res.redirect("/register");
-    }
-  })
-);
+// user register post route
+router.post("/register", catchAsync(users.register));
 
-router.get("/login", (req, res) => {
-  res.render("users/login");
-});
+// user render login form
+router.get("/login", users.renderLogin);
 
+// login post route
 // FMI http://www.passportjs.org/docs/authenticate/
 router.post(
   "/login",
@@ -41,17 +22,10 @@ router.post(
     failureFlash: true,
     failureRedirect: "/login",
   }),
-  (req, res) => {
-    req.flash("success", "Welcome Back!");
-    const redirectUrl = req.session.returnTo || "/campgrounds";
-    delete req.session.returnTo;
-    res.redirect(redirectUrl);
-  }
+  users.login
 );
 
-router.get("/logout", (req, res) => {
-  req.logout();
-  req.flash("success", "GoodBye!");
-  res.redirect("/campgrounds");
-});
+// user logout
+router.get("/logout", users.logout);
+
 module.exports = router;
