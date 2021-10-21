@@ -5,25 +5,25 @@ const catchAsync = require("../helper/catchAsync");
 const passport = require("passport");
 const users = require("../controllers/users");
 
-// user register render page
-router.get("/register", users.renderRegister);
+// FMI http://expressjs.com/zh-tw/api.html#router
+//  Use router.route() to avoid duplicate route naming and thus typing errors.
+router
+  .route("/register")
+  .get(users.renderRegister)
+  .post(catchAsync(users.register));
 
-// user register post route
-router.post("/register", catchAsync(users.register));
-
-// user render login form
-router.get("/login", users.renderLogin);
-
-// login post route
-// FMI http://www.passportjs.org/docs/authenticate/
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    failureFlash: true,
-    failureRedirect: "/login",
-  }),
-  users.login
-);
+router
+  .route("/login")
+  .get(users.renderLogin)
+  .post(
+    // login post route
+    // FMI http://www.passportjs.org/docs/authenticate/
+    passport.authenticate("local", {
+      failureFlash: true,
+      failureRedirect: "/login",
+    }),
+    users.login
+  );
 
 // user logout
 router.get("/logout", users.logout);
