@@ -5,7 +5,8 @@ const catchAsync = require("../helper/catchAsync");
 const { isLoggedIn, isAuthor, validateCampground } = require("../middleware");
 
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
 
 // FMI http://expressjs.com/zh-tw/api.html#router
 //  Use router.route() to avoid duplicate route naming and thus typing errors.
