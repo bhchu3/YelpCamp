@@ -1,3 +1,10 @@
+// DOTENV
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+console.log(process.env.SECRET);
+console.log(process.env.API_KEY);
+
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
