@@ -9,10 +9,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
+// FMI https://www.npmjs.com/package/multer-storage-cloudinary
 const storage = new CloudinaryStorage({
   cloudinary,
-  folder: "YelpCamp",
-  allowedFormats: ["jpeg", "png", "jpg"],
+  params: {
+    folder: "YelpCamp",
+    allowedFormats: ["jpeg", "png", "jpg"],
+  },
 });
 
 module.exports = {
