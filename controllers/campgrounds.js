@@ -40,7 +40,7 @@ module.exports.showCampground = async (req, res) => {
   res.render("campgrounds/show", { campground });
 };
 
-// edit campground form
+// render edit form
 module.exports.renderEditForm = async (req, res) => {
   const { id } = req.params;
   const campground = await CampGround.findById(id);
@@ -54,7 +54,6 @@ module.exports.renderEditForm = async (req, res) => {
 // update campground
 module.exports.updateCampground = async (req, res) => {
   const { id } = req.params;
-
   const campground = await CampGround.findByIdAndUpdate(
     id,
     { ...req.body.campground },
@@ -62,6 +61,14 @@ module.exports.updateCampground = async (req, res) => {
       new: true,
     }
   );
+  const imgs = req.files.map((f) => {
+    return {
+      url: f.path,
+      filename: f.filename,
+    };
+  });
+  campground.images.push(...imgs);
+  await campground.save();
   req.flash("success", "Successfully edit a campground!");
   res.redirect(`/campgrounds/${campground._id}`);
 };

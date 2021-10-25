@@ -7,6 +7,7 @@
       method="POST"
       class="needs-validation"
       novalidate
+      enctype="multipart/form-data"
     >
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
@@ -35,17 +36,8 @@
         <div class="invalid-feedback">Field can't be empty.</div>
       </div>
       <div class="mb-3">
-        <label for="image" class="form-label">Image Url</label>
-        <input
-          type="text"
-          id="image"
-          name="campground[image]"
-          value="<%= campground.image %>"
-          class="form-control"
-          required
-        />
-        <div class="valid-feedback">Looks good!</div>
-        <div class="invalid-feedback">Field can't be empty.</div>
+        <label for="image" class="form-label">Add images</label>
+        <input type="file" name="image" id="image" multiple />
       </div>
       <div class="mb-3">
         <label for="price" class="form-label">Campground Price</label>
