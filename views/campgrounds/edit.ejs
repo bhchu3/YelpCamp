@@ -36,10 +36,6 @@
         <div class="invalid-feedback">Field can't be empty.</div>
       </div>
       <div class="mb-3">
-        <label for="image" class="form-label">Add images</label>
-        <input type="file" name="image" id="image" multiple />
-      </div>
-      <div class="mb-3">
         <label for="price" class="form-label">Campground Price</label>
         <div class="input-group">
           <span class="input-group-text" id="basic-addon1">$</span>
@@ -69,6 +65,16 @@
         >
         <div class="valid-feedback">Looks good!</div>
         <div class="invalid-feedback">Field can't be empty.</div>
+      </div>
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload more images</label>
+        <input
+          class="form-control"
+          type="file"
+          id="image"
+          name="image"
+          multiple
+        />
       </div>
       <div class="mb-3">
         <button class="btn btn-success">Edit Campground</button>

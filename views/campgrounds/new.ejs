@@ -33,20 +33,6 @@
         <div class="valid-feedback">Looks good!</div>
         <div class="invalid-feedback">Field can't be empty.</div>
       </div>
-      <input type="file" name="image" id="" multiple />
-      <!-- <div class="mb-3">
-        <label for="image" class="form-label">Image Url</label>
-        <input
-          type="text"
-          id="image"
-          name="campground[image]"
-          value="https://source.unsplash.com/collection/483251/"
-          class="form-control"
-          required
-        />
-        <div class="valid-feedback">Looks good!</div>
-        <div class="invalid-feedback">Field can't be empty.</div>
-      </div> -->
       <div class="mb-3">
         <label for="price" class="form-label">Campground Price</label>
         <div class="input-group">
@@ -75,6 +61,16 @@
         ></textarea>
         <div class="valid-feedback">Looks good!</div>
         <div class="invalid-feedback">Field can't be empty.</div>
+      </div>
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload images</label>
+        <input
+          class="form-control"
+          type="file"
+          id="image"
+          name="image"
+          multiple
+        />
       </div>
       <div class="mb-3">
         <button class="btn btn-success">Add Campground</button>
